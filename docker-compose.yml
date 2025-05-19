@@ -1,8 +1,20 @@
 version: '3.8'
 
 services:
+  postgres:
+    image: postgres:16.6
+    container_name: acme_pg_db
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: acmedb
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
   vault:
-    image:  hashicorp/vault:1.19.4
+    image: hashicorp/vault:1.19.4
     container_name: vault
     ports:
       - "8200:8200"
@@ -19,8 +31,15 @@ services:
       - vault
     volumes:
       - ./init-vault.sh:/init-vault.sh:ro
+    tty: true
+    stdin_open: true
     entrypoint: /bin/sh
-    command: -c "apk add --no-cache curl >/dev/null && sleep 2 && sh /init-vault.sh"
+    command: >
+      -c "
+      apk add --no-cache curl openssl >/dev/null &&
+      echo 'curl and openssl installed' &&
+      sh /init-vault.sh
+      "
 
   app:
     build:
@@ -28,9 +47,13 @@ services:
     container_name: acme-platform
     depends_on:
       - vault-init
+      - postgres
     environment:
-      SPRING_PROFILES_ACTIVE: dev
+      ACME_DB_HOST: postgres
       SPRING_CLOUD_VAULT_URI: http://vault:8200
       SPRING_CLOUD_VAULT_TOKEN: root
     ports:
       - "8080:8080"
+
+volumes:
+  postgres_data:

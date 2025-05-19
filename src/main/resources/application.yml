@@ -1,6 +1,17 @@
 spring:
   application:
     name: acme-platform
+  liquibase:
+    change-log: classpath:db/changelog/master.xml
+  datasource:
+    url: jdbc:postgresql://${ACME_DB_HOST:localhost}:5432/acmedb
+    username: ${ACME_DB_USERNAME:postgres}
+    password: ${ACME_DB_PASSWORD:postgres}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
   cloud:
     vault:
       uri: ${SPRING_CLOUD_VAULT_URI:http://vault:8200}
@@ -8,9 +19,17 @@ spring:
       kv:
         enabled: true
         backend: secret
+        default-context: acme-platform
       authentication: TOKEN
+  config:
+    import: optional:vault://
 management:
   endpoints:
     web:
       exposure:
         include: "*"
+  endpoint:
+    health:
+      probes:
+        enabled: true
+      show-details: always
