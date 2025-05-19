@@ -41,6 +41,13 @@ public class UserProfileServiceImpl implements UserProfileService {
     }
 
     @Override
+    public UserProfileOutboundDto getUserById(UUID id) {
+        var userProfile = userProfileRepository.findByIdAndDeletedFalse(id)
+                .orElseThrow(() -> new UserProfileNotFoundException("User Profile not found"));
+        return userMapper.toOutboundUserDto(userProfile);
+    }
+
+    @Override
     public void softDeleteUserProfile(UUID authId) {
         var userProfile = userProfileRepository.findEntityByAuthIdAndDeletedFalse(authId)
                 .orElseThrow(() -> new UserProfileNotFoundException("User Profile not found"));

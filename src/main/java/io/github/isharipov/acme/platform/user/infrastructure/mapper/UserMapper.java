@@ -16,6 +16,7 @@ public interface UserMapper {
             @Mapping(target = "name", ignore = true),
             @Mapping(target = "createdAt", ignore = true),
             @Mapping(target = "updatedAt", ignore = true),
+            @Mapping(target = "deleted", ignore = true)
     })
     UserProfile createUserToUser(CreateUserProfileInboundDto createUser);
 

@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <databaseChangeLog
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
-  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
 
-  <include file="db/changelog/v1/001-create-user-auth-table.xml"/>
-  <include file="db/changelog/v1/002-create-user-profile-table.xml"/>
+    <include file="db/changelog/v1/001-create-user-auth-table.xml"/>
+    <include file="db/changelog/v1/002-create-user-profiles-table.xml"/>
+    <include file="db/changelog/v1/003-create-user-external-projects-table.xml"/>
 
 </databaseChangeLog>

@@ -11,5 +11,7 @@ public interface UserProfileService {
 
     UserProfileOutboundDto getUserProfileByAuthId(UUID authId);
 
+    UserProfileOutboundDto getUserById(UUID id);
+
     void softDeleteUserProfile(UUID authId);
 }
