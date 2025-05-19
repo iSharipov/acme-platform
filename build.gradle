@@ -42,6 +42,7 @@ dependencies {
     implementation("org.liquibase:liquibase-core")
     runtimeOnly 'org.postgresql:postgresql'
     /** Infra */
+    implementation 'io.micrometer:micrometer-registry-prometheus'
     implementation "org.mapstruct:mapstruct:${versions.mapstruct}"
     annotationProcessor "org.mapstruct:mapstruct-processor:${versions.mapstruct}"
     /** Test */
