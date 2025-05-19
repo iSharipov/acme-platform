@@ -10,4 +10,6 @@ public interface UserProfileService {
     UserProfileOutboundDto createUserProfile(CreateUserProfileInboundDto user);
 
     UserProfileOutboundDto getUserProfileByAuthId(UUID authId);
+
+    void softDeleteUserProfile(UUID authId);
 }

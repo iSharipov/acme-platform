@@ -6,12 +6,12 @@ import io.github.isharipov.acme.platform.auth.dto.RegisterInboundDto;
 import io.github.isharipov.acme.platform.auth.service.AuthService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
+import java.util.UUID;
 
 @Validated
 @RestController
@@ -36,5 +36,11 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<AuthOutboundDto> login(@Valid @RequestBody AuthInboundDto loginRequest) {
         return ResponseEntity.ok().body(authService.login(loginRequest));
+    }
+
+    @DeleteMapping("/user")
+    public ResponseEntity<Void> deleteSelf(@AuthenticationPrincipal UUID authId) {
+        authService.deleteSelf(authId);
+        return ResponseEntity.noContent().build();
     }
 }

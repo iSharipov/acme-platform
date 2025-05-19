@@ -9,9 +9,11 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Repository
-public interface UserRepository extends JpaRepository<UserProfile, Long> {
+public interface UserProfileRepository extends JpaRepository<UserProfile, Long> {
 
-    boolean existsByAuthId(UUID authId);
+    boolean existsByAuthIdAndDeletedFalse(UUID authId);
 
-    Optional<UserProfileProjection> findByAuthId(UUID authId);
+    Optional<UserProfileProjection> findByAuthIdAndDeletedFalse(UUID authId);
+
+    Optional<UserProfile> findEntityByAuthIdAndDeletedFalse(UUID authId);
 }

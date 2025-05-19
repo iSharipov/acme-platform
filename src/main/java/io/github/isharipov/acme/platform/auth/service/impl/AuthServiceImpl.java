@@ -3,6 +3,7 @@ package io.github.isharipov.acme.platform.auth.service.impl;
 import io.github.isharipov.acme.platform.auth.dto.*;
 import io.github.isharipov.acme.platform.auth.infrastructure.UserAlreadyExistsException;
 import io.github.isharipov.acme.platform.auth.infrastructure.mapper.UserAuthMapper;
+import io.github.isharipov.acme.platform.auth.model.UserAuth;
 import io.github.isharipov.acme.platform.auth.repository.UserAuthRepository;
 import io.github.isharipov.acme.platform.auth.service.AuthService;
 import io.github.isharipov.acme.platform.service.JwtTokenProvider;
@@ -13,6 +14,8 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+
+import java.util.UUID;
 
 @Service
 public class AuthServiceImpl implements AuthService {
@@ -64,5 +67,15 @@ public class AuthServiceImpl implements AuthService {
         var token = jwtTokenProvider.generateTokens(userAuth.getId().toString(), userAuth.getEmail());
 
         return new AuthOutboundDto(new UserAuthOutboundDto(userAuth.getEmail()), token);
+    }
+
+    @Transactional
+    @Override
+    public void deleteSelf(UUID authId) {
+        var authUser = userAuthRepository.findById(authId)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        userService.softDeleteUserProfile(authId);
+        authUser.setStatus(UserAuth.UserStatus.DELETED);
+        userAuthRepository.save(authUser);
     }
 }
