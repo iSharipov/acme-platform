@@ -99,6 +99,12 @@ public class RestResponseExceptionHandler {
         return ErrorType.USER_ALREADY_REGISTERED_ERROR.getErrorResponse(e.getMessage());
     }
 
+    @ExceptionHandler(RefreshTokenMismatchException.class)
+    public ResponseEntity<?> handleRefreshTokenMismatch(RefreshTokenMismatchException e) {
+        logger.error("Refresh token mismatch: {}", e.getMessage());
+        return ErrorType.AUTH_ERROR.getErrorResponse(e.getMessage());
+    }
+
     private HttpStatus resolveAnnotatedResponseStatus(Exception e) {
         logger.debug("Resolving annotated response status for exception [{}]", e.getClass());
         ResponseStatus annotation = findMergedAnnotation(e.getClass(), ResponseStatus.class);

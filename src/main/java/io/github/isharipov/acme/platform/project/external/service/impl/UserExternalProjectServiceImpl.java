@@ -1,10 +1,11 @@
-package io.github.isharipov.acme.platform.external.service;
+package io.github.isharipov.acme.platform.project.external.service.impl;
 
-import io.github.isharipov.acme.platform.external.dto.ExternalProjectInboundDto;
-import io.github.isharipov.acme.platform.external.dto.ExternalProjectOutboundDto;
-import io.github.isharipov.acme.platform.external.dto.ExternalProjectUpdateInboundDto;
-import io.github.isharipov.acme.platform.external.infrastructure.mapper.UserExternalProjectMapper;
-import io.github.isharipov.acme.platform.external.repository.UserExternalProjectRepository;
+import io.github.isharipov.acme.platform.project.external.dto.ExternalProjectInboundDto;
+import io.github.isharipov.acme.platform.project.external.dto.ExternalProjectOutboundDto;
+import io.github.isharipov.acme.platform.project.external.dto.ExternalProjectUpdateInboundDto;
+import io.github.isharipov.acme.platform.project.external.infrastructure.mapper.UserExternalProjectMapper;
+import io.github.isharipov.acme.platform.project.external.repository.UserExternalProjectRepository;
+import io.github.isharipov.acme.platform.project.external.service.UserExternalProjectService;
 import io.github.isharipov.acme.platform.user.service.UserProfileService;
 import jakarta.persistence.EntityNotFoundException;
 import org.slf4j.Logger;

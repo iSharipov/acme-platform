@@ -22,6 +22,10 @@
                 <constraints nullable="false"/>
             </column>
 
+            <column name="refresh_token" type="VARCHAR(512)">
+                <constraints nullable="true"/>
+            </column>
+
             <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
                 <constraints nullable="false"/>
             </column>

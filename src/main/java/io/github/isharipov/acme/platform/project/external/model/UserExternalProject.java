@@ -1,4 +1,4 @@
-package io.github.isharipov.acme.platform.external.model;
+package io.github.isharipov.acme.platform.project.external.model;
 
 import jakarta.persistence.*;
 

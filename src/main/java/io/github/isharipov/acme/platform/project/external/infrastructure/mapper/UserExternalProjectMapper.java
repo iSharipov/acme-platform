@@ -1,10 +1,10 @@
-package io.github.isharipov.acme.platform.external.infrastructure.mapper;
+package io.github.isharipov.acme.platform.project.external.infrastructure.mapper;
 
-import io.github.isharipov.acme.platform.external.dto.ExternalProjectInboundDto;
-import io.github.isharipov.acme.platform.external.dto.ExternalProjectOutboundDto;
-import io.github.isharipov.acme.platform.external.dto.ExternalProjectUpdateInboundDto;
-import io.github.isharipov.acme.platform.external.model.ExternalProjectProjection;
-import io.github.isharipov.acme.platform.external.model.UserExternalProject;
+import io.github.isharipov.acme.platform.project.external.dto.ExternalProjectInboundDto;
+import io.github.isharipov.acme.platform.project.external.dto.ExternalProjectOutboundDto;
+import io.github.isharipov.acme.platform.project.external.dto.ExternalProjectUpdateInboundDto;
+import io.github.isharipov.acme.platform.project.external.model.ExternalProjectProjection;
+import io.github.isharipov.acme.platform.project.external.model.UserExternalProject;
 import org.mapstruct.*;
 
 @Mapper(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)

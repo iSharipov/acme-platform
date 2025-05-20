@@ -6,9 +6,12 @@ import io.github.isharipov.acme.platform.auth.infrastructure.mapper.UserAuthMapp
 import io.github.isharipov.acme.platform.auth.model.UserAuth;
 import io.github.isharipov.acme.platform.auth.repository.UserAuthRepository;
 import io.github.isharipov.acme.platform.auth.service.AuthService;
+import io.github.isharipov.acme.platform.common.exception.JwtAuthenticationException;
+import io.github.isharipov.acme.platform.common.exception.RefreshTokenMismatchException;
 import io.github.isharipov.acme.platform.common.service.JwtTokenProvider;
 import io.github.isharipov.acme.platform.user.dto.CreateUserProfileInboundDto;
 import io.github.isharipov.acme.platform.user.service.UserProfileService;
+import io.jsonwebtoken.Claims;
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,20 +50,22 @@ public class AuthServiceImpl implements AuthService {
     public AuthOutboundDto register(RegisterInboundDto registerRequest) {
         logger.info("Attempting to register user with email={}", registerRequest.email());
         var authUser = registerUser(registerRequest);
-        logger.info("Successfully registered user with id={} and email={}", authUser.id(), authUser.email());
-        userService.createUserProfile(new CreateUserProfileInboundDto(authUser.id()));
-        var token = jwtTokenProvider.generateTokens(authUser.id().toString(), authUser.email());
-        return new AuthOutboundDto(new UserAuthOutboundDto(authUser.email()), token);
+        logger.info("Successfully registered user with id={} and email={}", authUser.getId(), authUser.getEmail());
+        userService.createUserProfile(new CreateUserProfileInboundDto(authUser.getId()));
+        var token = jwtTokenProvider.generateTokens(authUser.getId().toString(), authUser.getEmail());
+        authUser.setRefreshToken(token.refreshToken());
+        userAuthRepository.save(authUser);
+        return new AuthOutboundDto(new UserAuthOutboundDto(authUser.getEmail()), token);
     }
 
-    private RegisterOutboundDto registerUser(RegisterInboundDto registerRequest) {
+    private UserAuth registerUser(RegisterInboundDto registerRequest) {
         var userAuthExistsByEmail = userAuthRepository.existsByEmail(registerRequest.email());
         if (userAuthExistsByEmail) {
             logger.warn("Attempt to register already existing user with email={}", registerRequest.email());
             throw new UserAlreadyExistsException(
                     "User with email " + registerRequest.email() + " already exists");
         }
-        return userAuthMapper.toRegisterOutbound(userAuthRepository.save(userAuthMapper.toUserAuth(registerRequest)));
+        return userAuthRepository.save(userAuthMapper.toUserAuth(registerRequest));
     }
 
     @Override
@@ -76,7 +81,8 @@ public class AuthServiceImpl implements AuthService {
                 });
         logger.info("User login successful: id={}, email={}", userAuth.getId(), userAuth.getEmail());
         var token = jwtTokenProvider.generateTokens(userAuth.getId().toString(), userAuth.getEmail());
-
+        userAuth.setRefreshToken(token.refreshToken());
+        userAuthRepository.save(userAuth);
         return new AuthOutboundDto(new UserAuthOutboundDto(userAuth.getEmail()), token);
     }
 
@@ -94,5 +100,39 @@ public class AuthServiceImpl implements AuthService {
         userAuthRepository.save(authUser);
 
         logger.info("User account marked as deleted: id={}, email={}", authUser.getId(), authUser.getEmail());
+    }
+
+    @Override
+    public TokenOutboundDto refreshToken(String refreshToken) {
+        logger.info("Received refresh token request");
+        Claims claims;
+        try {
+            claims = jwtTokenProvider.parseClaims(refreshToken);
+            logger.debug("Parsed refresh token successfully for subject={}", claims.getSubject());
+        } catch (JwtAuthenticationException e) {
+            logger.warn("Failed to parse refresh token: {}", e.getMessage());
+            throw e;
+        }
+        var userId = UUID.fromString(claims.getSubject());
+        logger.debug("Extracted userId from token: {}", userId);
+        var user = userAuthRepository.findById(userId)
+                .orElseThrow(() -> {
+                    logger.warn("User not found for ID: {}", userId);
+                    return new UsernameNotFoundException("User not found");
+                });
+
+        if (!refreshToken.equals(user.getRefreshToken())) {
+            logger.warn("Refresh token mismatch for userId={} and email={}", userId, user.getEmail());
+            throw new RefreshTokenMismatchException("Refresh token mismatch");
+        }
+
+        logger.info("Refresh token valid for userId={}, issuing new tokens", userId);
+        var tokens = jwtTokenProvider.generateTokens(userId.toString(), user.getEmail());
+
+        user.setRefreshToken(tokens.refreshToken());
+        userAuthRepository.save(user);
+        logger.debug("Stored new refresh token for userId={}", userId);
+
+        return new TokenOutboundDto(tokens.accessToken(), tokens.refreshToken());
     }
 }

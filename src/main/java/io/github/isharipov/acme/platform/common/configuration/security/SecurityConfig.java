@@ -51,7 +51,8 @@ public class SecurityConfig {
                         ).permitAll()
                         .requestMatchers(
                                 "/auth/register",
-                                "/auth/login")
+                                "/auth/login",
+                                "/auth/refresh")
                         .permitAll()
                         .anyRequest()
                         .authenticated()

@@ -1,8 +1,6 @@
 package io.github.isharipov.acme.platform.auth.rest;
 
-import io.github.isharipov.acme.platform.auth.dto.AuthInboundDto;
-import io.github.isharipov.acme.platform.auth.dto.AuthOutboundDto;
-import io.github.isharipov.acme.platform.auth.dto.RegisterInboundDto;
+import io.github.isharipov.acme.platform.auth.dto.*;
 import io.github.isharipov.acme.platform.auth.service.AuthService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -42,5 +40,10 @@ public class AuthController {
     public ResponseEntity<Void> deleteSelf(@AuthenticationPrincipal UUID authId) {
         authService.deleteSelf(authId);
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/refresh")
+    public ResponseEntity<TokenOutboundDto> refreshToken(@RequestBody RefreshTokenInboundDto refreshTokenRequest) {
+        return ResponseEntity.ok(authService.refreshToken(refreshTokenRequest.refreshToken()));
     }
 }

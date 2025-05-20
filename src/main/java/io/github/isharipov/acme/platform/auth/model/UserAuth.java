@@ -26,6 +26,9 @@ public class UserAuth {
     @Column(name = "status", nullable = false, length = 255)
     private UserStatus status;
 
+    @Column(name = "refresh_token", length = 512)
+    private String refreshToken;
+
     @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt;
 
@@ -73,6 +76,14 @@ public class UserAuth {
 
     public void setStatus(UserStatus status) {
         this.status = status;
+    }
+
+    public String getRefreshToken() {
+        return refreshToken;
+    }
+
+    public void setRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
     }
 
     public Instant getCreatedAt() {

@@ -14,6 +14,7 @@ public interface UserAuthMapper {
     @Mappings({
             @Mapping(target = "id", ignore = true),
             @Mapping(target = "status", ignore = true),
+            @Mapping(target = "refreshToken", ignore = true),
             @Mapping(target = "createdAt", ignore = true),
             @Mapping(target = "updatedAt", ignore = true),
     })

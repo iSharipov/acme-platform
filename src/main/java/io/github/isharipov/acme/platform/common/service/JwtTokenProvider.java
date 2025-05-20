@@ -35,7 +35,6 @@ public class JwtTokenProvider {
     public String generateRefreshToken(String subject, String email) {
         return Jwts.builder()
                 .subject(subject)
-                .claim("email", email)
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24 * 7))
                 .signWith(Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8)), Jwts.SIG.HS256)
