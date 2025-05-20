@@ -105,6 +105,12 @@ public class RestResponseExceptionHandler {
         return ErrorType.AUTH_ERROR.getErrorResponse(e.getMessage());
     }
 
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<?> handleUnexpectedException(Exception ex) {
+        logger.error("Unexpected error occurred", ex);
+        return ErrorType.INTERNAL_ERROR.getErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "An unexpected error occurred.");
+    }
+
     private HttpStatus resolveAnnotatedResponseStatus(Exception e) {
         logger.debug("Resolving annotated response status for exception [{}]", e.getClass());
         ResponseStatus annotation = findMergedAnnotation(e.getClass(), ResponseStatus.class);

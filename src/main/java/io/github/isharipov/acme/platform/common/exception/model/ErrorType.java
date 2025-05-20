@@ -12,7 +12,8 @@ public enum ErrorType {
     HTTP_MESSAGE_NOT_READABLE(HttpStatus.UNPROCESSABLE_ENTITY, "Http Message Not Readable"),
     USER_ALREADY_REGISTERED_ERROR(HttpStatus.CONFLICT, "User is already registered"),
     AUTH_ERROR(HttpStatus.UNAUTHORIZED, "Authentication failed"),
-    ACCESS_DENIED(HttpStatus.FORBIDDEN, "Access denied");
+    ACCESS_DENIED(HttpStatus.FORBIDDEN, "Access denied"),
+    INTERNAL_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "Unexpected server error");
 
     private final HttpStatus httpStatus;
     private final String message;
