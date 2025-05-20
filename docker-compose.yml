@@ -3,7 +3,7 @@ version: '3.8'
 services:
   postgres:
     image: postgres:16.6
-    container_name: acme_pg_db
+    container_name: acme-pg-db
     restart: always
     ports:
       - "5432:5432"
@@ -13,9 +13,16 @@ services:
       POSTGRES_DB: acmedb
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-U", "postgres" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - acme-network
   vault:
     image: hashicorp/vault:1.19.4
-    container_name: vault
+    container_name: acme-vault
     ports:
       - "8200:8200"
     environment:
@@ -24,11 +31,20 @@ services:
     cap_add:
       - IPC_LOCK
     command: vault server -dev
+    healthcheck:
+      test: [ "CMD", "curl", "--fail", "http://vault:8200/v1/sys/health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    networks:
+      - acme-network
 
   vault-init:
     image: hashicorp/vault:1.19.4
+    container_name: acme-vault-init
     depends_on:
-      - vault
+      vault:
+        condition: service_healthy
     volumes:
       - ./init-vault.sh:/init-vault.sh:ro
     tty: true
@@ -40,41 +56,78 @@ services:
       echo 'curl and openssl installed' &&
       sh /init-vault.sh
       "
+    networks:
+      - acme-network
 
   app:
     build:
       context: .
     container_name: acme-platform
     depends_on:
-      - vault-init
-      - postgres
+      vault:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
     environment:
+      LOG_MODE: docker
       ACME_DB_HOST: postgres
       SPRING_CLOUD_VAULT_URI: http://vault:8200
       SPRING_CLOUD_VAULT_TOKEN: root
     ports:
       - "8080:8080"
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
     networks:
-      - default
+      - acme-network
 
   prometheus:
     image: prom/prometheus:latest
+    container_name: acme-prometheus
     ports:
       - "9090:9090"
     volumes:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
     networks:
-      - default
+      - acme-network
+
+  loki:
+    image: grafana/loki:2.9.3
+    container_name: acme-loki
+    ports:
+      - "3100:3100"
+    command: -config.file=/etc/loki/local-config.yaml
+    volumes:
+      - loki_data:/loki
+    networks:
+      - acme-network
+
+  promtail:
+    image: grafana/promtail:2.9.3
+    container_name: acme-promtail
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./promtail-config.yml:/etc/promtail/config.yml
+    command: -config.file=/etc/promtail/config.yml
+    networks:
+      - acme-network
 
   grafana:
     image: grafana/grafana-oss:latest
+    container_name: acme-grafana
     ports:
       - "3000:3000"
     volumes:
       - grafana_storage:/var/lib/grafana
     networks:
-      - default
-
+      - acme-network
 volumes:
   postgres_data:
   grafana_storage:
+  loki_data:
+  prometheus_data:
+networks:
+  acme-network:

@@ -19,10 +19,11 @@ repositories {
 }
 
 ext.versions = [
-        springCloud: '2024.0.1',
-        jjwt       : '0.12.6',
-        openapi    : '2.8.8',
-        mapstruct  : '1.6.3'
+        springCloud           : '2024.0.1',
+        jjwt                  : '0.12.6',
+        openapi               : '2.8.8',
+        mapstruct             : '1.6.3',
+        logstashLogbackEncoder: '8.0'
 ]
 
 dependencies {
@@ -45,6 +46,7 @@ dependencies {
     implementation 'io.micrometer:micrometer-registry-prometheus'
     implementation "org.mapstruct:mapstruct:${versions.mapstruct}"
     annotationProcessor "org.mapstruct:mapstruct-processor:${versions.mapstruct}"
+    implementation "net.logstash.logback:logstash-logback-encoder:${versions.logstashLogbackEncoder}"
     /** Test */
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }

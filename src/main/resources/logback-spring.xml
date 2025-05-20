@@ -1,0 +1,4 @@
+<configuration>
+    <property name="LOG_MODE" value="${LOG_MODE:-local}"/>
+    <include resource="logback-${LOG_MODE}.xml"/>
+</configuration>
