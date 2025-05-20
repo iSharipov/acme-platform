@@ -6,15 +6,18 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
-import java.util.UUID;
 
 @Service
 public class JwtTokenProvider {
+
+    private static final Logger logger = LoggerFactory.getLogger(JwtTokenProvider.class);
 
     @Value("${jwt.secret}")
     private String jwtSecret;
@@ -40,28 +43,23 @@ public class JwtTokenProvider {
     }
 
     public TokenOutboundDto generateTokens(String subject, String email) {
+        logger.debug("Generating JWT tokens for subject={}, email={}", subject, email);
         var accessToken = generateAccessToken(subject, email);
         var refreshToken = generateRefreshToken(subject, email);
         return new TokenOutboundDto(accessToken, refreshToken);
     }
 
-    public UUID getAuthId(String token) {
-        var claims = Jwts.parser()
-                .verifyWith(Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8)))
-                .build()
-                .parseSignedClaims(token)
-                .getPayload();
-        return UUID.fromString(claims.getSubject());
-    }
-
     public Claims parseClaims(String token) {
         try {
-            return Jwts.parser()
+            Claims claims = Jwts.parser()
                     .verifyWith(Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8)))
                     .build()
                     .parseSignedClaims(token)
                     .getPayload();
+            logger.debug("Successfully parsed claims from token");
+            return claims;
         } catch (JwtException | IllegalArgumentException ex) {
+            logger.warn("Failed to parse JWT claims: {}", ex.getMessage());
             throw new JwtAuthenticationException("Invalid or expired JWT token", ex);
         }
     }

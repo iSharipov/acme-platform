@@ -47,6 +47,7 @@ dependencies {
     implementation "org.mapstruct:mapstruct:${versions.mapstruct}"
     annotationProcessor "org.mapstruct:mapstruct-processor:${versions.mapstruct}"
     implementation "net.logstash.logback:logstash-logback-encoder:${versions.logstashLogbackEncoder}"
+    implementation 'io.micrometer:micrometer-tracing-bridge-brave'
     /** Test */
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }

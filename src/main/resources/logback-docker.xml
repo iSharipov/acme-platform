@@ -6,11 +6,11 @@
                 <logLevel/>
                 <loggerName/>
                 <threadName/>
+                <mdc/>
                 <pattern>
                     <pattern>
                         {
-                        "message": "%message",
-                        "context": "%mdc"
+                        "message": "%message"
                         }
                     </pattern>
                 </pattern>

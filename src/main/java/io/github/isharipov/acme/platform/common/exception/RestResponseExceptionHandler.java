@@ -6,6 +6,7 @@ import io.github.isharipov.acme.platform.auth.infrastructure.UserAlreadyExistsEx
 import io.github.isharipov.acme.platform.common.exception.model.ErrorType;
 import io.github.isharipov.acme.platform.common.exception.model.FieldValidationError;
 import io.github.isharipov.acme.platform.common.exception.model.GlobalValidationError;
+import io.github.isharipov.acme.platform.user.infrastructure.UserProfileNotFoundException;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.ConstraintViolationException;
 import org.slf4j.Logger;
@@ -64,7 +65,7 @@ public class RestResponseExceptionHandler {
         return ErrorType.VALIDATION_ERROR.getErrorResponse(e.getMessage());
     }
 
-    @ExceptionHandler({EntityNotFoundException.class})
+    @ExceptionHandler({EntityNotFoundException.class, UserProfileNotFoundException.class})
     public ResponseEntity<?> handleEntityExceptions(Exception e) {
         logger.error("Entity not found", e);
         HttpStatus httpStatus = resolveAnnotatedResponseStatus(e);
@@ -94,7 +95,7 @@ public class RestResponseExceptionHandler {
 
     @ExceptionHandler(UserAlreadyExistsException.class)
     public ResponseEntity<?> handleClientAlreadyRegisteredException(UserAlreadyExistsException e) {
-        logger.error("User already registered", e);
+        logger.error("User already registered: {}", e.getMessage());
         return ErrorType.USER_ALREADY_REGISTERED_ERROR.getErrorResponse(e.getMessage());
     }
 
