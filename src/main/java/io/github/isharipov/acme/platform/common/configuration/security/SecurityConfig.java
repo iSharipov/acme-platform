@@ -1,8 +1,10 @@
-package io.github.isharipov.acme.platform.configuration.security;
+package io.github.isharipov.acme.platform.common.configuration.security;
 
 import io.github.isharipov.acme.platform.auth.filter.JwtAuthenticationFilter;
 import io.github.isharipov.acme.platform.auth.service.impl.AuthUserDetailsService;
-import io.github.isharipov.acme.platform.service.JwtTokenProvider;
+import io.github.isharipov.acme.platform.common.exception.CustomAccessDeniedHandler;
+import io.github.isharipov.acme.platform.common.exception.CustomAuthenticationEntryPoint;
+import io.github.isharipov.acme.platform.common.service.JwtTokenProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -22,16 +24,24 @@ public class SecurityConfig {
 
     private final JwtTokenProvider jwtTokenProvider;
     private final AuthUserDetailsService userDetailsService;
+    private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
+    private final CustomAccessDeniedHandler customAccessDeniedHandler;
 
-    public SecurityConfig(JwtTokenProvider jwtTokenProvider, AuthUserDetailsService userDetailsService) {
+    public SecurityConfig(JwtTokenProvider jwtTokenProvider, AuthUserDetailsService userDetailsService, CustomAuthenticationEntryPoint customAuthenticationEntryPoint, CustomAccessDeniedHandler customAccessDeniedHandler) {
         this.jwtTokenProvider = jwtTokenProvider;
         this.userDetailsService = userDetailsService;
+        this.customAuthenticationEntryPoint = customAuthenticationEntryPoint;
+        this.customAccessDeniedHandler = customAccessDeniedHandler;
     }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
+                .exceptionHandling(e -> e
+                        .authenticationEntryPoint(customAuthenticationEntryPoint)
+                        .accessDeniedHandler(customAccessDeniedHandler)
+                )
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
                                 "/v3/api-docs/**",
@@ -54,7 +64,7 @@ public class SecurityConfig {
 
     @Bean
     public JwtAuthenticationFilter jwtAuthenticationFilter() {
-        return new JwtAuthenticationFilter(jwtTokenProvider);
+        return new JwtAuthenticationFilter(jwtTokenProvider, customAuthenticationEntryPoint);
     }
 
     @Bean

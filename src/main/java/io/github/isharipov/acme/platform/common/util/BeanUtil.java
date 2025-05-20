@@ -1,4 +1,4 @@
-package io.github.isharipov.acme.platform.util;
+package io.github.isharipov.acme.platform.common.util;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;

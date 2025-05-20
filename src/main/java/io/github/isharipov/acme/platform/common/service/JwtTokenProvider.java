@@ -1,6 +1,8 @@
-package io.github.isharipov.acme.platform.service;
+package io.github.isharipov.acme.platform.common.service;
 
 import io.github.isharipov.acme.platform.auth.dto.TokenOutboundDto;
+import io.github.isharipov.acme.platform.common.exception.JwtAuthenticationException;
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
@@ -47,20 +49,20 @@ public class JwtTokenProvider {
         var claims = Jwts.parser()
                 .verifyWith(Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8)))
                 .build()
-                .parseClaimsJws(token)
-                .getBody();
+                .parseSignedClaims(token)
+                .getPayload();
         return UUID.fromString(claims.getSubject());
     }
 
-    public boolean validateToken(String token) {
+    public Claims parseClaims(String token) {
         try {
-            Jwts.parser()
+            return Jwts.parser()
                     .verifyWith(Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8)))
                     .build()
-                    .parseClaimsJws(token);
-            return true;
+                    .parseSignedClaims(token)
+                    .getPayload();
         } catch (JwtException | IllegalArgumentException ex) {
-            return false;
+            throw new JwtAuthenticationException("Invalid or expired JWT token", ex);
         }
     }
 

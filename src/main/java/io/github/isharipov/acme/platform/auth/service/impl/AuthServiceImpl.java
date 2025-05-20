@@ -6,7 +6,7 @@ import io.github.isharipov.acme.platform.auth.infrastructure.mapper.UserAuthMapp
 import io.github.isharipov.acme.platform.auth.model.UserAuth;
 import io.github.isharipov.acme.platform.auth.repository.UserAuthRepository;
 import io.github.isharipov.acme.platform.auth.service.AuthService;
-import io.github.isharipov.acme.platform.service.JwtTokenProvider;
+import io.github.isharipov.acme.platform.common.service.JwtTokenProvider;
 import io.github.isharipov.acme.platform.user.dto.CreateUserProfileInboundDto;
 import io.github.isharipov.acme.platform.user.service.UserProfileService;
 import jakarta.transaction.Transactional;

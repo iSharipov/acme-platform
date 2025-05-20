@@ -1,6 +1,6 @@
 package io.github.isharipov.acme.platform.auth.model;
 
-import io.github.isharipov.acme.platform.util.BeanUtil;
+import io.github.isharipov.acme.platform.common.util.BeanUtil;
 import jakarta.persistence.PrePersist;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
