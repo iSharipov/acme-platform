@@ -1,4 +1,4 @@
-package io.github.isharipov.acme.platform.user.project.external.dto;
+package io.github.isharipov.acme.platform.external.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;

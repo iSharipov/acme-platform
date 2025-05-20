@@ -1,7 +1,7 @@
-package io.github.isharipov.acme.platform.user.project.external.repository;
+package io.github.isharipov.acme.platform.external.repository;
 
-import io.github.isharipov.acme.platform.user.project.external.model.ExternalProjectProjection;
-import io.github.isharipov.acme.platform.user.project.external.model.UserExternalProject;
+import io.github.isharipov.acme.platform.external.model.ExternalProjectProjection;
+import io.github.isharipov.acme.platform.external.model.UserExternalProject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

@@ -31,11 +31,6 @@ services:
     cap_add:
       - IPC_LOCK
     command: vault server -dev
-    healthcheck:
-      test: [ "CMD", "curl", "--fail", "http://vault:8200/v1/sys/health" ]
-      interval: 10s
-      timeout: 5s
-      retries: 10
     networks:
       - acme-network
 
@@ -43,8 +38,7 @@ services:
     image: hashicorp/vault:1.19.4
     container_name: acme-vault-init
     depends_on:
-      vault:
-        condition: service_healthy
+      - vault
     volumes:
       - ./init-vault.sh:/init-vault.sh:ro
     tty: true

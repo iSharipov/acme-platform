@@ -1,12 +1,12 @@
-package io.github.isharipov.acme.platform.user.project.external.service;
+package io.github.isharipov.acme.platform.external.service;
 
 import io.github.isharipov.acme.platform.user.dto.UserProfileOutboundDto;
-import io.github.isharipov.acme.platform.user.project.external.dto.ExternalProjectInboundDto;
-import io.github.isharipov.acme.platform.user.project.external.dto.ExternalProjectOutboundDto;
-import io.github.isharipov.acme.platform.user.project.external.dto.ExternalProjectUpdateInboundDto;
-import io.github.isharipov.acme.platform.user.project.external.infrastructure.mapper.UserExternalProjectMapper;
-import io.github.isharipov.acme.platform.user.project.external.model.UserExternalProject;
-import io.github.isharipov.acme.platform.user.project.external.repository.UserExternalProjectRepository;
+import io.github.isharipov.acme.platform.external.dto.ExternalProjectInboundDto;
+import io.github.isharipov.acme.platform.external.dto.ExternalProjectOutboundDto;
+import io.github.isharipov.acme.platform.external.dto.ExternalProjectUpdateInboundDto;
+import io.github.isharipov.acme.platform.external.infrastructure.mapper.UserExternalProjectMapper;
+import io.github.isharipov.acme.platform.external.model.UserExternalProject;
+import io.github.isharipov.acme.platform.external.repository.UserExternalProjectRepository;
 import io.github.isharipov.acme.platform.user.service.UserProfileService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.Page;

@@ -1,4 +1,4 @@
-package io.github.isharipov.acme.platform.user.project.external.dto;
+package io.github.isharipov.acme.platform.external.dto;
 
 import java.util.UUID;
 

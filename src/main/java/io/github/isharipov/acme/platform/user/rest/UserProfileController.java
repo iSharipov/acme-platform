@@ -1,8 +1,8 @@
 package io.github.isharipov.acme.platform.user.rest;
 
 import io.github.isharipov.acme.platform.user.dto.UserProfileOutboundDto;
-import io.github.isharipov.acme.platform.user.project.external.dto.ExternalProjectOutboundDto;
-import io.github.isharipov.acme.platform.user.project.external.service.UserExternalProjectService;
+import io.github.isharipov.acme.platform.external.dto.ExternalProjectOutboundDto;
+import io.github.isharipov.acme.platform.external.service.UserExternalProjectService;
 import io.github.isharipov.acme.platform.user.service.UserProfileService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;

@@ -1,9 +1,9 @@
-package io.github.isharipov.acme.platform.user.project.external.rest;
+package io.github.isharipov.acme.platform.external.rest;
 
-import io.github.isharipov.acme.platform.user.project.external.dto.ExternalProjectInboundDto;
-import io.github.isharipov.acme.platform.user.project.external.dto.ExternalProjectOutboundDto;
-import io.github.isharipov.acme.platform.user.project.external.dto.ExternalProjectUpdateInboundDto;
-import io.github.isharipov.acme.platform.user.project.external.service.UserExternalProjectService;
+import io.github.isharipov.acme.platform.external.dto.ExternalProjectInboundDto;
+import io.github.isharipov.acme.platform.external.dto.ExternalProjectOutboundDto;
+import io.github.isharipov.acme.platform.external.dto.ExternalProjectUpdateInboundDto;
+import io.github.isharipov.acme.platform.external.service.UserExternalProjectService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
