@@ -18,4 +18,6 @@ public interface UserProfileRepository extends JpaRepository<UserProfile, Long> 
     Optional<UserProfile> findEntityByAuthIdAndDeletedFalse(UUID authId);
 
     Optional<UserProfileProjection> findByIdAndDeletedFalse(UUID id);
+
+    Optional<UserProfile> findEntityByAuthId(UUID authId);
 }

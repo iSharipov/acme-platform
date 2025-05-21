@@ -12,4 +12,5 @@ import java.util.UUID;
 @Repository
 public interface UserExternalProjectRepository extends JpaRepository<UserExternalProject, UUID> {
     Page<ExternalProjectProjection> findAllByUserId(UUID userId, Pageable pageable);
+    boolean existsByExternalId(String externalId);
 }

@@ -1,15 +1,19 @@
 package io.github.isharipov.acme.platform.auth.service.impl;
 
-import io.github.isharipov.acme.platform.auth.dto.*;
-import io.github.isharipov.acme.platform.auth.infrastructure.UserAlreadyExistsException;
+import io.github.isharipov.acme.platform.auth.infrastructure.exception.UserAlreadyExistsException;
 import io.github.isharipov.acme.platform.auth.infrastructure.mapper.UserAuthMapper;
 import io.github.isharipov.acme.platform.auth.model.UserAuth;
 import io.github.isharipov.acme.platform.auth.repository.UserAuthRepository;
+import io.github.isharipov.acme.platform.auth.rest.dto.AuthInboundDto;
+import io.github.isharipov.acme.platform.auth.rest.dto.AuthOutboundDto;
+import io.github.isharipov.acme.platform.auth.rest.dto.RegisterInboundDto;
+import io.github.isharipov.acme.platform.auth.rest.dto.UserAuthOutboundDto;
 import io.github.isharipov.acme.platform.auth.service.AuthService;
+import io.github.isharipov.acme.platform.common.dto.TokenOutboundDto;
 import io.github.isharipov.acme.platform.common.exception.JwtAuthenticationException;
 import io.github.isharipov.acme.platform.common.exception.RefreshTokenMismatchException;
 import io.github.isharipov.acme.platform.common.service.JwtTokenProvider;
-import io.github.isharipov.acme.platform.user.dto.CreateUserProfileInboundDto;
+import io.github.isharipov.acme.platform.user.rest.dto.CreateUserProfileInboundDto;
 import io.github.isharipov.acme.platform.user.service.UserProfileService;
 import io.jsonwebtoken.Claims;
 import jakarta.transaction.Transactional;
@@ -59,11 +63,18 @@ public class AuthServiceImpl implements AuthService {
     }
 
     private UserAuth registerUser(RegisterInboundDto registerRequest) {
-        var userAuthExistsByEmail = userAuthRepository.existsByEmail(registerRequest.email());
-        if (userAuthExistsByEmail) {
-            logger.warn("Attempt to register already existing user with email={}", registerRequest.email());
-            throw new UserAlreadyExistsException(
-                    "User with email " + registerRequest.email() + " already exists");
+        var existingUser = userAuthRepository.findByEmail(registerRequest.email());
+        if (existingUser.isPresent()) {
+            var user = existingUser.get();
+            if (user.getStatus() != UserAuth.UserStatus.DELETED) {
+                logger.warn("Attempt to register already existing user with email={}", registerRequest.email());
+                throw new UserAlreadyExistsException(
+                        "User with email " + registerRequest.email() + " already exists");
+            }
+
+            user.setPassword(registerRequest.password());
+            user.setStatus(UserAuth.UserStatus.ACTIVE);
+            return userAuthRepository.save(user);
         }
         return userAuthRepository.save(userAuthMapper.toUserAuth(registerRequest));
     }

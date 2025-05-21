@@ -1,9 +1,7 @@
 package io.github.isharipov.acme.platform.auth.infrastructure.mapper;
 
-import io.github.isharipov.acme.platform.auth.dto.RegisterInboundDto;
-import io.github.isharipov.acme.platform.auth.dto.RegisterOutboundDto;
-import io.github.isharipov.acme.platform.auth.dto.UserAuthOutboundDto;
 import io.github.isharipov.acme.platform.auth.model.UserAuth;
+import io.github.isharipov.acme.platform.auth.rest.dto.RegisterInboundDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
@@ -19,8 +17,4 @@ public interface UserAuthMapper {
             @Mapping(target = "updatedAt", ignore = true),
     })
     UserAuth toUserAuth(RegisterInboundDto registerRequest);
-
-    UserAuthOutboundDto toUserAuthOutbound(UserAuth userAuth);
-
-    RegisterOutboundDto toRegisterOutbound(UserAuth userAuth);
 }

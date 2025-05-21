@@ -1,0 +1,8 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:acmeTestDb;DB_CLOSE_DELAY=-1
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+jwt:
+  secret: Z3Vlc3Qtc2VjcmV0LXRlc3QtdmFsdWUtdG8tdXNlLWhlcmU=

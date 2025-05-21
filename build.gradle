@@ -2,6 +2,7 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '3.4.5'
     id 'io.spring.dependency-management' version '1.1.7'
+    id 'jacoco'
 }
 
 group = 'io.github.isharipov'
@@ -23,7 +24,9 @@ ext.versions = [
         jjwt                  : '0.12.6',
         openapi               : '2.8.8',
         mapstruct             : '1.6.3',
-        logstashLogbackEncoder: '8.0'
+        logstashLogbackEncoder: '8.0',
+        javaFaker             : '1.0.2',
+        snakeyaml             : '2.2'
 ]
 
 dependencies {
@@ -49,7 +52,12 @@ dependencies {
     implementation "net.logstash.logback:logstash-logback-encoder:${versions.logstashLogbackEncoder}"
     implementation 'io.micrometer:micrometer-tracing-bridge-brave'
     /** Test */
+    runtimeOnly 'com.h2database:h2'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation("com.github.javafaker:javafaker:${versions.javaFaker}") {
+        exclude group: "org.yaml", module: "snakeyaml"
+    }
+    testImplementation "org.yaml:snakeyaml:${versions.snakeyaml}"
 }
 
 dependencyManagement {
@@ -68,4 +76,23 @@ tasks.withType(JavaCompile).configureEach {
 
 tasks.named('test') {
     useJUnitPlatform()
+
+    reports {
+        html.required = true
+        junitXml.required = true
+    }
+}
+
+jacoco {
+    toolVersion = "0.8.10"
+}
+
+tasks.named('jacocoTestReport') {
+    dependsOn tasks.named('test')
+
+    reports {
+        xml.required = true
+        csv.required = false
+        html.required = true
+    }
 }

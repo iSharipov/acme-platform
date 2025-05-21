@@ -1,9 +1,9 @@
 package io.github.isharipov.acme.platform.auth.service;
 
-import io.github.isharipov.acme.platform.auth.dto.AuthInboundDto;
-import io.github.isharipov.acme.platform.auth.dto.AuthOutboundDto;
-import io.github.isharipov.acme.platform.auth.dto.RegisterInboundDto;
-import io.github.isharipov.acme.platform.auth.dto.TokenOutboundDto;
+import io.github.isharipov.acme.platform.auth.rest.dto.AuthInboundDto;
+import io.github.isharipov.acme.platform.auth.rest.dto.AuthOutboundDto;
+import io.github.isharipov.acme.platform.auth.rest.dto.RegisterInboundDto;
+import io.github.isharipov.acme.platform.common.dto.TokenOutboundDto;
 
 import java.util.UUID;
 

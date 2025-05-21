@@ -1,6 +1,6 @@
 package io.github.isharipov.acme.platform.common.service;
 
-import io.github.isharipov.acme.platform.auth.dto.TokenOutboundDto;
+import io.github.isharipov.acme.platform.common.dto.TokenOutboundDto;
 import io.github.isharipov.acme.platform.common.exception.JwtAuthenticationException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
+import java.util.UUID;
 
 @Service
 public class JwtTokenProvider {
@@ -24,6 +25,7 @@ public class JwtTokenProvider {
 
     public String generateAccessToken(String subject, String email) {
         return Jwts.builder()
+                .id(UUID.randomUUID().toString())
                 .subject(subject)
                 .claim("email", email)
                 .issuedAt(new Date())
@@ -34,6 +36,7 @@ public class JwtTokenProvider {
 
     public String generateRefreshToken(String subject, String email) {
         return Jwts.builder()
+                .id(UUID.randomUUID().toString())
                 .subject(subject)
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24 * 7))

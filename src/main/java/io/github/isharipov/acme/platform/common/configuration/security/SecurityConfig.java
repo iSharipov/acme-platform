@@ -1,9 +1,9 @@
 package io.github.isharipov.acme.platform.common.configuration.security;
 
-import io.github.isharipov.acme.platform.auth.filter.JwtAuthenticationFilter;
+import io.github.isharipov.acme.platform.common.security.filter.JwtAuthenticationFilter;
 import io.github.isharipov.acme.platform.auth.service.impl.AuthUserDetailsService;
-import io.github.isharipov.acme.platform.common.exception.CustomAccessDeniedHandler;
-import io.github.isharipov.acme.platform.common.exception.CustomAuthenticationEntryPoint;
+import io.github.isharipov.acme.platform.common.exception.security.CustomAccessDeniedHandler;
+import io.github.isharipov.acme.platform.common.exception.security.CustomAuthenticationEntryPoint;
 import io.github.isharipov.acme.platform.common.service.JwtTokenProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

@@ -1,11 +1,14 @@
 package io.github.isharipov.acme.platform.user.service.impl;
 
-import io.github.isharipov.acme.platform.user.dto.CreateUserProfileInboundDto;
+import io.github.isharipov.acme.platform.common.dto.Principal;
 import io.github.isharipov.acme.platform.user.dto.UserProfileOutboundDto;
 import io.github.isharipov.acme.platform.user.infrastructure.UserProfileAlreadyExists;
 import io.github.isharipov.acme.platform.user.infrastructure.UserProfileNotFoundException;
-import io.github.isharipov.acme.platform.user.infrastructure.mapper.UserMapper;
+import io.github.isharipov.acme.platform.user.infrastructure.mapper.UserProfileMapper;
+import io.github.isharipov.acme.platform.user.model.UserProfile;
 import io.github.isharipov.acme.platform.user.repository.UserProfileRepository;
+import io.github.isharipov.acme.platform.user.rest.dto.CreateUserProfileInboundDto;
+import io.github.isharipov.acme.platform.user.rest.dto.UserProfileInboundDto;
 import io.github.isharipov.acme.platform.user.service.UserProfileService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,36 +22,51 @@ public class UserProfileServiceImpl implements UserProfileService {
     private static final Logger logger = LoggerFactory.getLogger(UserProfileServiceImpl.class);
 
     private final UserProfileRepository userProfileRepository;
-    private final UserMapper userMapper;
+    private final UserProfileMapper userProfileMapper;
 
-    public UserProfileServiceImpl(UserProfileRepository userProfileRepository, UserMapper userMapper) {
+
+    public UserProfileServiceImpl(UserProfileRepository userProfileRepository, UserProfileMapper userProfileMapper) {
         this.userProfileRepository = userProfileRepository;
-        this.userMapper = userMapper;
+        this.userProfileMapper = userProfileMapper;
     }
 
     @Override
     public UserProfileOutboundDto createUserProfile(CreateUserProfileInboundDto createUserProfile) {
-        logger.info("Creating user profile for authId={}", createUserProfile.authId());
-        var userProfileExistsByAuthId = userProfileRepository.existsByAuthIdAndDeletedFalse(createUserProfile.authId());
-        if (userProfileExistsByAuthId) {
-            logger.warn("User profile already exists for authId={}", createUserProfile.authId());
-            throw new UserProfileAlreadyExists(
-                    "User Profile for the User with Id " + createUserProfile.authId() + " already exists");
+        var authId = createUserProfile.authId();
+        logger.info("Creating or restoring user profile for authId={}", authId);
+
+        var optionalProfile = userProfileRepository.findEntityByAuthId(authId);
+
+        if (optionalProfile.isPresent()) {
+            var profile = optionalProfile.get();
+
+            if (!profile.isDeleted()) {
+                logger.warn("User profile already exists for authId={}", authId);
+                throw new UserProfileAlreadyExists(
+                        "User Profile for the User with Id " + authId + " already exists");
+            }
+
+            logger.info("Restoring soft-deleted profile for authId={}", authId);
+            profile.setDeleted(false);
+            var restored = userProfileRepository.save(profile);
+            return userProfileMapper.toOutboundUserDto(restored);
         }
-        var saved = userProfileRepository.save(userMapper.createUserToUser(createUserProfile));
-        logger.info("User profile created: id={}, authId={}", saved.getId(), saved.getAuthId());
-        return userMapper.toOutboundUserDto(saved);
+
+        var newProfile = userProfileMapper.createUserToUser(createUserProfile);
+        var saved = userProfileRepository.save(newProfile);
+        logger.info("New user profile created: id={}, authId={}", saved.getId(), saved.getAuthId());
+        return userProfileMapper.toOutboundUserDto(saved);
     }
 
     @Override
-    public UserProfileOutboundDto getUserProfileByAuthId(UUID authId) {
-        logger.info("Fetching user profile by authId={}", authId);
-        var userProfile = userProfileRepository.findByAuthIdAndDeletedFalse(authId)
+    public UserProfileOutboundDto getUserProfileByAuthId(Principal principal) {
+        logger.info("Fetching user profile by authId={}", principal.authId());
+        var userProfile = userProfileRepository.findByAuthIdAndDeletedFalse(principal.authId())
                 .orElseThrow(() -> {
-                    logger.warn("User profile not found for authId={}", authId);
+                    logger.warn("User profile not found for authId={}", principal.authId());
                     return new UserProfileNotFoundException("User Profile not found");
                 });
-        return userMapper.toOutboundUserDto(userProfile);
+        return userProfileMapper.toOutboundUserDto(userProfile, principal.email());
     }
 
     @Override
@@ -59,7 +77,7 @@ public class UserProfileServiceImpl implements UserProfileService {
                     logger.warn("User profile not found for id={}", id);
                     return new UserProfileNotFoundException("User Profile not found");
                 });
-        return userMapper.toOutboundUserDto(userProfile);
+        return userProfileMapper.toOutboundUserDto(userProfile);
     }
 
     @Override
@@ -73,5 +91,40 @@ public class UserProfileServiceImpl implements UserProfileService {
         userProfile.setDeleted(true);
         userProfileRepository.save(userProfile);
         logger.info("User profile marked as deleted: id={}, authId={}", userProfile.getId(), userProfile.getAuthId());
+    }
+
+    @Override
+    public UserProfileOutboundDto createOrRestoreUserProfile(UUID authId) {
+        logger.info("Creating or restoring profile for authId={}", authId);
+
+        var userProfile = userProfileRepository.findEntityByAuthId(authId)
+                .orElseGet(() -> {
+                    logger.info("No profile found, creating new for authId={}", authId);
+                    var newProfile = new UserProfile();
+                    newProfile.setAuthId(authId);
+                    newProfile.setDeleted(false);
+                    return newProfile;
+                });
+
+        if (userProfile.isDeleted()) {
+            logger.info("Restoring soft-deleted profile for authId={}", authId);
+            userProfile.setDeleted(false);
+        }
+
+        var saved = userProfileRepository.save(userProfile);
+        return userProfileMapper.toOutboundUserDto(saved);
+    }
+
+    @Override
+    public UserProfileOutboundDto updateUserProfile(Principal principal, UserProfileInboundDto request) {
+        logger.info("Update user profile for authId={}", principal.authId());
+        var userProfile = userProfileRepository.findEntityByAuthIdAndDeletedFalse(principal.authId())
+                .orElseThrow(() -> {
+                    logger.warn("User profile not found for update: authId={}", principal.authId());
+                    return new UserProfileNotFoundException("User Profile not found");
+                });
+        userProfileMapper.updateFromDto(request, userProfile);
+        var saved = userProfileRepository.save(userProfile);
+        return userProfileMapper.toOutboundUserDto(saved, principal.email());
     }
 }

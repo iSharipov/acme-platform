@@ -8,4 +8,6 @@ public interface ExternalProjectProjection {
     String getExternalId();
 
     String getName();
+
+    UUID getUserId();
 }

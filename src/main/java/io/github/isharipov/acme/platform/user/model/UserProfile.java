@@ -10,7 +10,7 @@ import java.util.UUID;
 public class UserProfile {
 
     @Id
-    @GeneratedValue(generator = "assigned-identity")
+    @GeneratedValue
     @Column(name = "id", nullable = false, updatable = false, columnDefinition = "uuid")
     private UUID id;
 
@@ -85,5 +85,18 @@ public class UserProfile {
 
     public void setUpdatedAt(Instant updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        UserProfile that = (UserProfile) o;
+        return id != null && id.equals(that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return id != null ? id.hashCode() : 0;
     }
 }

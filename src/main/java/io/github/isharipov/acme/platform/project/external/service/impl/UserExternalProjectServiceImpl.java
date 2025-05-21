@@ -1,10 +1,11 @@
 package io.github.isharipov.acme.platform.project.external.service.impl;
 
-import io.github.isharipov.acme.platform.project.external.dto.ExternalProjectInboundDto;
 import io.github.isharipov.acme.platform.project.external.dto.ExternalProjectOutboundDto;
-import io.github.isharipov.acme.platform.project.external.dto.ExternalProjectUpdateInboundDto;
+import io.github.isharipov.acme.platform.project.external.infrastructure.exception.ExternalProjectAlreadyExistsException;
 import io.github.isharipov.acme.platform.project.external.infrastructure.mapper.UserExternalProjectMapper;
 import io.github.isharipov.acme.platform.project.external.repository.UserExternalProjectRepository;
+import io.github.isharipov.acme.platform.project.external.rest.dto.ExternalProjectInboundDto;
+import io.github.isharipov.acme.platform.project.external.rest.dto.ExternalProjectUpdateInboundDto;
 import io.github.isharipov.acme.platform.project.external.service.UserExternalProjectService;
 import io.github.isharipov.acme.platform.user.service.UserProfileService;
 import jakarta.persistence.EntityNotFoundException;
@@ -34,6 +35,11 @@ public class UserExternalProjectServiceImpl implements UserExternalProjectServic
     public ExternalProjectOutboundDto createExternalProject(ExternalProjectInboundDto externalProject) {
         logger.info("Creating external project with externalId={}, userId={}",
                 externalProject.externalId(), externalProject.userId());
+        boolean externalProjectExists = userExternalProjectRepository.existsByExternalId(externalProject.externalId());
+        if (externalProjectExists) {
+            logger.warn("Project with externalId={} already exists, skipping creation", externalProject.externalId());
+            throw new ExternalProjectAlreadyExistsException("Project with externalId " + externalProject.externalId() + " already exists");
+        }
         var userExternalProject = userExternalProjectMapper.toUserExternalProject(externalProject);
         if (externalProject.userId() != null) {
             var userProfile = userProfileService.getUserById(externalProject.userId());
@@ -69,6 +75,7 @@ public class UserExternalProjectServiceImpl implements UserExternalProjectServic
 
     public Page<ExternalProjectOutboundDto> getUserProjects(UUID userId, Pageable pageable) {
         logger.info("Fetching external projects for userId={}, page={}", userId, pageable.getPageNumber());
+        userProfileService.getUserById(userId);
         return userExternalProjectRepository.findAllByUserId(userId, pageable)
                 .map(userExternalProjectMapper::toExternalProjectOutbound);
     }

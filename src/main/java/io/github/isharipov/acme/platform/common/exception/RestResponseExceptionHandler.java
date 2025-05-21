@@ -2,10 +2,11 @@ package io.github.isharipov.acme.platform.common.exception;
 
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
-import io.github.isharipov.acme.platform.auth.infrastructure.UserAlreadyExistsException;
+import io.github.isharipov.acme.platform.auth.infrastructure.exception.UserAlreadyExistsException;
 import io.github.isharipov.acme.platform.common.exception.model.ErrorType;
 import io.github.isharipov.acme.platform.common.exception.model.FieldValidationError;
 import io.github.isharipov.acme.platform.common.exception.model.GlobalValidationError;
+import io.github.isharipov.acme.platform.project.external.infrastructure.exception.ExternalProjectAlreadyExistsException;
 import io.github.isharipov.acme.platform.user.infrastructure.UserProfileNotFoundException;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.ConstraintViolationException;
@@ -15,6 +16,8 @@ import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -99,16 +102,40 @@ public class RestResponseExceptionHandler {
         return ErrorType.USER_ALREADY_REGISTERED_ERROR.getErrorResponse(e.getMessage());
     }
 
+    @ExceptionHandler(ExternalProjectAlreadyExistsException.class)
+    public ResponseEntity<?> handleExternalProjectAlreadyExistsException(ExternalProjectAlreadyExistsException e) {
+        logger.error("External project already exists: {}", e.getMessage());
+        return ErrorType.EXTERNAL_PROJECT_ALREADY_REGISTERED_ERROR.getErrorResponse(e.getMessage());
+    }
+
     @ExceptionHandler(RefreshTokenMismatchException.class)
     public ResponseEntity<?> handleRefreshTokenMismatch(RefreshTokenMismatchException e) {
         logger.error("Refresh token mismatch: {}", e.getMessage());
         return ErrorType.AUTH_ERROR.getErrorResponse(e.getMessage());
     }
 
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<?> handleBadCredentialsException(BadCredentialsException e) {
+        logger.error("Authentication failed: {}", e.getMessage());
+        return ErrorType.AUTH_ERROR.getErrorResponse(HttpStatus.UNAUTHORIZED, "Invalid credentials");
+    }
+
+    @ExceptionHandler(JwtAuthenticationException.class)
+    public ResponseEntity<?> handleJwtAuthenticationException(JwtAuthenticationException e) {
+        logger.warn("JWT authentication failed: {}", e.getMessage());
+        return ErrorType.AUTH_ERROR.getErrorResponse(HttpStatus.UNAUTHORIZED, e.getMessage());
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<?> handleUnexpectedException(Exception ex) {
         logger.error("Unexpected error occurred", ex);
         return ErrorType.INTERNAL_ERROR.getErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "An unexpected error occurred.");
+    }
+
+    @ExceptionHandler(DisabledException.class)
+    public ResponseEntity<?> handleDisabledException(DisabledException ex) {
+        logger.error("Login failed: {}", ex.getMessage());
+        return ErrorType.AUTH_ERROR.getErrorResponse(HttpStatus.UNAUTHORIZED, ex.getMessage());
     }
 
     private HttpStatus resolveAnnotatedResponseStatus(Exception e) {

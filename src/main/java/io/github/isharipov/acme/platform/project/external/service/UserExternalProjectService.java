@@ -1,8 +1,8 @@
 package io.github.isharipov.acme.platform.project.external.service;
 
-import io.github.isharipov.acme.platform.project.external.dto.ExternalProjectInboundDto;
+import io.github.isharipov.acme.platform.project.external.rest.dto.ExternalProjectInboundDto;
 import io.github.isharipov.acme.platform.project.external.dto.ExternalProjectOutboundDto;
-import io.github.isharipov.acme.platform.project.external.dto.ExternalProjectUpdateInboundDto;
+import io.github.isharipov.acme.platform.project.external.rest.dto.ExternalProjectUpdateInboundDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 

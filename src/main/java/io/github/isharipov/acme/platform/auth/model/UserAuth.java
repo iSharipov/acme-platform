@@ -12,7 +12,7 @@ import java.util.UUID;
 public class UserAuth {
 
     @Id
-    @GeneratedValue(generator = "assigned-identity")
+    @GeneratedValue
     @Column(name = "id", updatable = false, nullable = false, columnDefinition = "uuid")
     private UUID id;
 
@@ -108,6 +108,19 @@ public class UserAuth {
         LOCKED,
         BANNED,
         DELETED
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        UserAuth userAuth = (UserAuth) o;
+        return id != null && id.equals(userAuth.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return id != null ? id.hashCode() : 0;
     }
 }
 
