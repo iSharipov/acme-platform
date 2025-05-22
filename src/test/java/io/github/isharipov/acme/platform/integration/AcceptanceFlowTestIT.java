@@ -95,6 +95,30 @@ class AcceptanceFlowTestIT {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content[0].name").value("TEST_PROJECT"));
 
+        // DUPLICATE PROJECT WITH SAME externalId -> 409
+        mockMvc.perform(post("/api/projects/external")
+                        .header("Authorization", "Bearer " + accessToken)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(externalProject)))
+                .andExpect(status().isConflict());
+
+        // PROJECT WITH EMPTY externalId -> 400
+        var badProject = new ExternalProjectInboundDto("", "INVALID_PROJECT", userId);
+        mockMvc.perform(post("/api/projects/external")
+                        .header("Authorization", "Bearer " + accessToken)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(badProject)))
+                .andExpect(status().isBadRequest());
+
+        // PROJECT WITH NON EXISTENT RANDOM USER ID -> 404
+        var fakeUserId = UUID.randomUUID();
+        var hijackAttempt = new ExternalProjectInboundDto(faker.internet().uuid(), "HACKED_PROJECT", fakeUserId);
+        mockMvc.perform(post("/api/projects/external")
+                        .header("Authorization", "Bearer " + accessToken)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(hijackAttempt)))
+                .andExpect(status().isNotFound());
+
         // REFRESH TOKEN
         mockMvc.perform(post("/auth/refresh")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -102,13 +126,25 @@ class AcceptanceFlowTestIT {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.accessToken").exists());
 
+        // INVALID REFRESH TOKEN -> 401
+        mockMvc.perform(post("/auth/refresh")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(new RefreshTokenInboundDto("invalid-token"))))
+                .andExpect(status().isUnauthorized());
+
         // UNAUTHORIZED ACCESS CHECK
         mockMvc.perform(get("/api/users/me")).andExpect(status().isUnauthorized());
 
-        // BAD INPUT CHECK
+        // BAD EMAIL INPUT -> 400
         mockMvc.perform(post("/auth/register")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"email\": \"not_valid_email\", \"password\": \"" + PASSWORD + "\"}"))
+                .andExpect(status().isBadRequest());
+
+        // BAD PASSWORD INPUT -> 400
+        mockMvc.perform(post("/auth/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"email\": \"" + faker.internet().emailAddress() + "\", \"password\": \"short\"}"))
                 .andExpect(status().isBadRequest());
 
         // DELETE USER
@@ -116,7 +152,17 @@ class AcceptanceFlowTestIT {
                         .header("Authorization", "Bearer " + accessToken))
                 .andExpect(status().isNoContent());
 
-        // REGISTER SAME USER AGAIN
+        // ACCESS AFTER DELETE -> 404
+        mockMvc.perform(get("/api/users/me")
+                        .header("Authorization", "Bearer " + accessToken))
+                .andExpect(status().isNotFound());
+
+        // RE-DELETE -> 404
+        mockMvc.perform(delete("/auth/user")
+                        .header("Authorization", "Bearer " + accessToken))
+                .andExpect(status().isNotFound());
+
+        // REGISTER SAME USER AGAIN AFTER DELETION -> should restore
         mockMvc.perform(post("/auth/register")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(new RegisterInboundDto(email, PASSWORD))))

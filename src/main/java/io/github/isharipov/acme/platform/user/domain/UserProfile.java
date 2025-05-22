@@ -1,6 +1,6 @@
 package io.github.isharipov.acme.platform.user.domain;
 
-import io.github.isharipov.acme.platform.common.domain.Auditable;
+import io.github.isharipov.acme.platform.common.model.Auditable;
 import jakarta.persistence.*;
 
 import java.util.UUID;

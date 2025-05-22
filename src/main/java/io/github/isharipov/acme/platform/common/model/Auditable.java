@@ -1,4 +1,4 @@
-package io.github.isharipov.acme.platform.common.domain;
+package io.github.isharipov.acme.platform.common.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.MappedSuperclass;

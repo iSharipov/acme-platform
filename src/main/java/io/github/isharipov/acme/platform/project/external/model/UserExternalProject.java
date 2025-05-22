@@ -1,6 +1,6 @@
 package io.github.isharipov.acme.platform.project.external.model;
 
-import io.github.isharipov.acme.platform.common.domain.Auditable;
+import io.github.isharipov.acme.platform.common.model.Auditable;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 
