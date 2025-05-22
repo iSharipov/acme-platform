@@ -6,7 +6,7 @@ Java 17, Docker
 ```
 ## Run
 ```bash
-docker compose up --build
+docker compose --profile infra --profile app up --build -d
 ```
 ## API
 
