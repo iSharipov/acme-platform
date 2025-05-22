@@ -1,6 +1,6 @@
 package io.github.isharipov.acme.platform.project.external.service.impl;
 
-import io.github.isharipov.acme.platform.project.external.dto.ExternalProjectOutboundDto;
+import io.github.isharipov.acme.platform.project.external.rest.dto.ExternalProjectOutboundDto;
 import io.github.isharipov.acme.platform.project.external.infrastructure.exception.ExternalProjectAlreadyExistsException;
 import io.github.isharipov.acme.platform.project.external.infrastructure.mapper.UserExternalProjectMapper;
 import io.github.isharipov.acme.platform.project.external.repository.UserExternalProjectRepository;

@@ -1,49 +1,40 @@
-package io.github.isharipov.acme.platform.auth.model;
+package io.github.isharipov.acme.platform.auth.domain;
 
 
+import io.github.isharipov.acme.platform.common.domain.Auditable;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 
-import java.time.Instant;
 import java.util.UUID;
 
 @Entity
 @EntityListeners(UserAuthEntityListener.class)
 @Table(name = "user_auth")
-public class UserAuth {
+public class UserAuth extends Auditable {
 
     @Id
     @GeneratedValue
     @Column(name = "id", updatable = false, nullable = false, columnDefinition = "uuid")
     private UUID id;
 
-    @Column(name = "email", nullable = false, unique = true, length = 200)
+    @NotBlank
+    @Column(name = "email", nullable = false, unique = true)
     private String email;
 
-    @Column(name = "password", nullable = false, length = 255)
+    @NotBlank
+    @Column(name = "password", nullable = false)
     private String password;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "status", nullable = false, length = 255)
+    @Column(name = "status", nullable = false)
     private UserStatus status;
 
     @Column(name = "refresh_token", length = 512)
     private String refreshToken;
 
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private Instant createdAt;
-
-    @Column(name = "updated_at")
-    private Instant updatedAt;
-
     @PrePersist
     public void onCreate() {
-        this.createdAt = Instant.now();
         this.status = this.status != null ? this.status : UserStatus.ACTIVE;
-    }
-
-    @PreUpdate
-    public void onUpdate() {
-        this.updatedAt = Instant.now();
     }
 
     public UUID getId() {
@@ -84,22 +75,6 @@ public class UserAuth {
 
     public void setRefreshToken(String refreshToken) {
         this.refreshToken = refreshToken;
-    }
-
-    public Instant getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(Instant createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public Instant getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(Instant updatedAt) {
-        this.updatedAt = updatedAt;
     }
 
     public enum UserStatus {

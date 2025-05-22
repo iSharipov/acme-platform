@@ -1,11 +1,11 @@
 package io.github.isharipov.acme.platform.user.service.impl;
 
 import io.github.isharipov.acme.platform.common.dto.Principal;
-import io.github.isharipov.acme.platform.user.dto.UserProfileOutboundDto;
+import io.github.isharipov.acme.platform.user.rest.dto.UserProfileOutboundDto;
 import io.github.isharipov.acme.platform.user.infrastructure.UserProfileAlreadyExists;
 import io.github.isharipov.acme.platform.user.infrastructure.UserProfileNotFoundException;
 import io.github.isharipov.acme.platform.user.infrastructure.mapper.UserProfileMapper;
-import io.github.isharipov.acme.platform.user.model.UserProfile;
+import io.github.isharipov.acme.platform.user.domain.UserProfile;
 import io.github.isharipov.acme.platform.user.repository.UserProfileRepository;
 import io.github.isharipov.acme.platform.user.rest.dto.CreateUserProfileInboundDto;
 import io.github.isharipov.acme.platform.user.rest.dto.UserProfileInboundDto;

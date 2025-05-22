@@ -1,6 +1,6 @@
 package io.github.isharipov.acme.platform.project.external.infrastructure.mapper;
 
-import io.github.isharipov.acme.platform.project.external.dto.ExternalProjectOutboundDto;
+import io.github.isharipov.acme.platform.project.external.rest.dto.ExternalProjectOutboundDto;
 import io.github.isharipov.acme.platform.project.external.model.ExternalProjectProjection;
 import io.github.isharipov.acme.platform.project.external.model.UserExternalProject;
 import io.github.isharipov.acme.platform.project.external.rest.dto.ExternalProjectInboundDto;

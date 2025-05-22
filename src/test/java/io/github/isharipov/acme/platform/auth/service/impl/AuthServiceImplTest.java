@@ -2,7 +2,7 @@ package io.github.isharipov.acme.platform.auth.service.impl;
 
 import io.github.isharipov.acme.platform.auth.rest.dto.AuthInboundDto;
 import io.github.isharipov.acme.platform.auth.infrastructure.mapper.UserAuthMapper;
-import io.github.isharipov.acme.platform.auth.model.UserAuth;
+import io.github.isharipov.acme.platform.auth.domain.UserAuth;
 import io.github.isharipov.acme.platform.auth.repository.UserAuthRepository;
 import io.github.isharipov.acme.platform.common.exception.JwtAuthenticationException;
 import io.github.isharipov.acme.platform.common.exception.RefreshTokenMismatchException;

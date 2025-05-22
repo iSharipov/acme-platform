@@ -2,7 +2,7 @@ package io.github.isharipov.acme.platform.auth.service.impl;
 
 import io.github.isharipov.acme.platform.auth.infrastructure.exception.UserAlreadyExistsException;
 import io.github.isharipov.acme.platform.auth.infrastructure.mapper.UserAuthMapper;
-import io.github.isharipov.acme.platform.auth.model.UserAuth;
+import io.github.isharipov.acme.platform.auth.domain.UserAuth;
 import io.github.isharipov.acme.platform.auth.repository.UserAuthRepository;
 import io.github.isharipov.acme.platform.auth.rest.dto.AuthInboundDto;
 import io.github.isharipov.acme.platform.auth.rest.dto.AuthOutboundDto;
@@ -118,31 +118,32 @@ public class AuthServiceImpl implements AuthService {
         logger.info("Received refresh token request");
         Claims claims;
         try {
+            logger.debug("Parsing refresh token...");
             claims = jwtTokenProvider.parseClaims(refreshToken);
             logger.debug("Parsed refresh token successfully for subject={}", claims.getSubject());
         } catch (JwtAuthenticationException e) {
             logger.warn("Failed to parse refresh token: {}", e.getMessage());
             throw e;
         }
-        var userId = UUID.fromString(claims.getSubject());
-        logger.debug("Extracted userId from token: {}", userId);
-        var user = userAuthRepository.findById(userId)
+        var authId = UUID.fromString(claims.getSubject());
+        logger.debug("Extracted authId from token: {}", authId);
+        var user = userAuthRepository.findById(authId)
                 .orElseThrow(() -> {
-                    logger.warn("User not found for ID: {}", userId);
+                    logger.warn("User not found for ID: {}", authId);
                     return new UsernameNotFoundException("User not found");
                 });
 
         if (!refreshToken.equals(user.getRefreshToken())) {
-            logger.warn("Refresh token mismatch for userId={} and email={}", userId, user.getEmail());
+            logger.warn("Refresh token mismatch for authId={} and email={}", authId, user.getEmail());
             throw new RefreshTokenMismatchException("Refresh token mismatch");
         }
 
-        logger.info("Refresh token valid for userId={}, issuing new tokens", userId);
-        var tokens = jwtTokenProvider.generateTokens(userId.toString(), user.getEmail());
+        logger.info("Refresh token valid for authId={}, issuing new tokens", authId);
+        var tokens = jwtTokenProvider.generateTokens(authId.toString(), user.getEmail());
 
         user.setRefreshToken(tokens.refreshToken());
         userAuthRepository.save(user);
-        logger.debug("Stored new refresh token for userId={}", userId);
+        logger.debug("Stored new refresh token for authId={}", authId);
 
         return new TokenOutboundDto(tokens.accessToken(), tokens.refreshToken());
     }

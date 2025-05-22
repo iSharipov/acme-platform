@@ -39,13 +39,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         try {
             String token = resolveToken(request);
             if (token != null) {
+                logger.debug("Token detected in request [{}]", request.getRequestURI());
                 var claims = jwtTokenProvider.parseClaims(token);
                 var authId = UUID.fromString(claims.getSubject());
                 var email = claims.get("email", String.class);
+                logger.debug("Authenticated user authId={}, email={} from JWT", authId, email);
                 var principal = new Principal(authId, email);
                 var authentication =
                         new UsernamePasswordAuthenticationToken(principal, null, List.of());
                 SecurityContextHolder.getContext().setAuthentication(authentication);
+            } else {
+                logger.trace("No JWT token found in request [{}]", request.getRequestURI());
             }
             filterChain.doFilter(request, response);
         } catch (JwtAuthenticationException ex) {
@@ -57,8 +61,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private String resolveToken(HttpServletRequest request) {
         var bearerToken = request.getHeader(HttpHeaders.AUTHORIZATION);
-        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
-            return bearerToken.substring(7);
+        if (StringUtils.hasText(bearerToken)) {
+            bearerToken = bearerToken.trim();
+            if (bearerToken.startsWith("Bearer ")) {
+                return bearerToken.substring(7);
+            }
+            logger.debug("Authorization header present but does not start with Bearer");
         }
         return null;
     }

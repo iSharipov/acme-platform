@@ -1,4 +1,4 @@
-package io.github.isharipov.acme.platform.user.dto;
+package io.github.isharipov.acme.platform.user.rest.dto;
 
 import java.util.UUID;
 

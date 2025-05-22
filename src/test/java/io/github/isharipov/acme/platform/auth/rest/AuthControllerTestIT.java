@@ -253,7 +253,7 @@ class AuthControllerTestIT {
 
     @Test
     void shouldReturnUnauthorized_whenDeletingUserWithoutToken() throws Exception {
-        // GIVE
+        // GIVEN
         // WHEN
         // THEN
         mockMvc.perform(delete("/auth/user"))

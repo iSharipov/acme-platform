@@ -1,7 +1,7 @@
 package io.github.isharipov.acme.platform.user.repository;
 
-import io.github.isharipov.acme.platform.user.model.UserProfile;
-import io.github.isharipov.acme.platform.user.model.UserProfileProjection;
+import io.github.isharipov.acme.platform.user.domain.UserProfile;
+import io.github.isharipov.acme.platform.user.domain.UserProfileProjection;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

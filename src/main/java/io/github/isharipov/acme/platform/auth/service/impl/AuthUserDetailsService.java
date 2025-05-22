@@ -1,6 +1,6 @@
 package io.github.isharipov.acme.platform.auth.service.impl;
 
-import io.github.isharipov.acme.platform.auth.model.UserAuth;
+import io.github.isharipov.acme.platform.auth.domain.UserAuth;
 import io.github.isharipov.acme.platform.auth.repository.UserAuthRepository;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;

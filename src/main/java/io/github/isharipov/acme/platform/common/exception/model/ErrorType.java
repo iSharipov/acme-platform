@@ -11,7 +11,7 @@ public enum ErrorType {
     ENTITY_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "Entity error"),
     HTTP_MESSAGE_NOT_READABLE(HttpStatus.UNPROCESSABLE_ENTITY, "Http Message Not Readable"),
     USER_ALREADY_REGISTERED_ERROR(HttpStatus.CONFLICT, "User is already registered"),
-    EXTERNAL_PROJECT_ALREADY_REGISTERED_ERROR(HttpStatus.CONFLICT, "External project is already registered"),
+    EXTERNAL_PROJECT_ALREADY_EXISTS_ERROR(HttpStatus.CONFLICT, "External project is already exists"),
     AUTH_ERROR(HttpStatus.UNAUTHORIZED, "Authentication failed"),
     ACCESS_DENIED(HttpStatus.FORBIDDEN, "Access denied"),
     INTERNAL_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "Unexpected server error");

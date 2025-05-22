@@ -2,9 +2,9 @@ package io.github.isharipov.acme.platform.user.infrastructure.mapper;
 
 import io.github.isharipov.acme.platform.user.rest.dto.CreateUserProfileInboundDto;
 import io.github.isharipov.acme.platform.user.rest.dto.UserProfileInboundDto;
-import io.github.isharipov.acme.platform.user.dto.UserProfileOutboundDto;
-import io.github.isharipov.acme.platform.user.model.UserProfile;
-import io.github.isharipov.acme.platform.user.model.UserProfileProjection;
+import io.github.isharipov.acme.platform.user.rest.dto.UserProfileOutboundDto;
+import io.github.isharipov.acme.platform.user.domain.UserProfile;
+import io.github.isharipov.acme.platform.user.domain.UserProfileProjection;
 import org.mapstruct.*;
 
 @Mapper(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)

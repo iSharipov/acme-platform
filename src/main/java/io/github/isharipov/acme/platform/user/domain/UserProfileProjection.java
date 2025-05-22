@@ -1,4 +1,4 @@
-package io.github.isharipov.acme.platform.user.model;
+package io.github.isharipov.acme.platform.user.domain;
 
 import java.util.UUID;
 

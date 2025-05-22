@@ -4,6 +4,8 @@ services:
   postgres:
     image: postgres:16.6
     container_name: acme-pg-db
+    profiles:
+      - infra
     restart: always
     ports:
       - "5432:5432"
@@ -23,6 +25,8 @@ services:
   vault:
     image: hashicorp/vault:1.19.4
     container_name: acme-vault
+    profiles:
+      - infra
     ports:
       - "8200:8200"
     environment:
@@ -42,6 +46,8 @@ services:
   vault-init:
     image: hashicorp/vault:1.19.4
     container_name: acme-vault-init
+    profiles:
+      - infra
     depends_on:
       - vault
     volumes:
@@ -62,6 +68,8 @@ services:
     build:
       context: .
     container_name: acme-platform
+    profiles:
+      - app
     depends_on:
       vault:
         condition: service_healthy
@@ -85,6 +93,8 @@ services:
   prometheus:
     image: prom/prometheus:latest
     container_name: acme-prometheus
+    profiles:
+      - infra
     ports:
       - "9090:9090"
     volumes:
@@ -96,6 +106,8 @@ services:
   loki:
     image: grafana/loki:2.9.3
     container_name: acme-loki
+    profiles:
+      - infra
     ports:
       - "3100:3100"
     command: -config.file=/etc/loki/local-config.yaml
@@ -107,6 +119,8 @@ services:
   promtail:
     image: grafana/promtail:2.9.3
     container_name: acme-promtail
+    profiles:
+      - infra
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ./promtail-config.yml:/etc/promtail/config.yml
@@ -117,6 +131,8 @@ services:
   grafana:
     image: grafana/grafana-oss:latest
     container_name: acme-grafana
+    profiles:
+      - infra
     ports:
       - "3000:3000"
     volumes:

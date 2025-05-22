@@ -1,4 +1,4 @@
-package io.github.isharipov.acme.platform.auth.model;
+package io.github.isharipov.acme.platform.auth.domain;
 
 import io.github.isharipov.acme.platform.common.util.BeanUtil;
 import jakarta.persistence.PrePersist;

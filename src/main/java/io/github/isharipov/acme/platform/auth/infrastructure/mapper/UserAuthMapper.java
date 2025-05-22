@@ -1,6 +1,6 @@
 package io.github.isharipov.acme.platform.auth.infrastructure.mapper;
 
-import io.github.isharipov.acme.platform.auth.model.UserAuth;
+import io.github.isharipov.acme.platform.auth.domain.UserAuth;
 import io.github.isharipov.acme.platform.auth.rest.dto.RegisterInboundDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

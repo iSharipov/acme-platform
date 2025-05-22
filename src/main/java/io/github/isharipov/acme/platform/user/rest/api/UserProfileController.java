@@ -1,10 +1,10 @@
 package io.github.isharipov.acme.platform.user.rest.api;
 
 import io.github.isharipov.acme.platform.common.dto.Principal;
-import io.github.isharipov.acme.platform.project.external.dto.ExternalProjectOutboundDto;
+import io.github.isharipov.acme.platform.project.external.rest.dto.ExternalProjectOutboundDto;
 import io.github.isharipov.acme.platform.project.external.service.UserExternalProjectService;
 import io.github.isharipov.acme.platform.user.rest.dto.UserProfileInboundDto;
-import io.github.isharipov.acme.platform.user.dto.UserProfileOutboundDto;
+import io.github.isharipov.acme.platform.user.rest.dto.UserProfileOutboundDto;
 import io.github.isharipov.acme.platform.user.service.UserProfileService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;

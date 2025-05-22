@@ -1,42 +1,28 @@
 package io.github.isharipov.acme.platform.project.external.model;
 
+import io.github.isharipov.acme.platform.common.domain.Auditable;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 
-import java.time.Instant;
 import java.util.UUID;
 
 @Entity
 @Table(name = "user_external_projects")
-public class UserExternalProject {
+public class UserExternalProject extends Auditable {
 
     @Id
     @GeneratedValue
     private UUID id;
 
-    @Column(nullable = false, unique = true)
+    @NotBlank
+    @Column(name = "external_id", nullable = false, unique = true)
     private String externalId;
 
-    @Column
+    @Column(name = "name")
     private String name;
 
-    @Column
+    @Column(name = "user_id")
     private UUID userId;
-
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private Instant createdAt;
-
-    @Column(name = "updated_at")
-    private Instant updatedAt;
-
-    @PrePersist
-    public void onCreate() {
-        this.createdAt = Instant.now();
-    }
-
-    @PreUpdate
-    public void onUpdate() {
-        this.updatedAt = Instant.now();
-    }
 
     public UUID getId() {
         return id;
@@ -68,22 +54,6 @@ public class UserExternalProject {
 
     public void setUserId(UUID userId) {
         this.userId = userId;
-    }
-
-    public Instant getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(Instant createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public Instant getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(Instant updatedAt) {
-        this.updatedAt = updatedAt;
     }
 
     @Override

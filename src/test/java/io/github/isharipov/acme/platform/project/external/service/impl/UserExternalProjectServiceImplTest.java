@@ -1,12 +1,12 @@
 package io.github.isharipov.acme.platform.project.external.service.impl;
 
-import io.github.isharipov.acme.platform.project.external.dto.ExternalProjectOutboundDto;
+import io.github.isharipov.acme.platform.project.external.rest.dto.ExternalProjectOutboundDto;
 import io.github.isharipov.acme.platform.project.external.infrastructure.mapper.UserExternalProjectMapper;
 import io.github.isharipov.acme.platform.project.external.model.UserExternalProject;
 import io.github.isharipov.acme.platform.project.external.repository.UserExternalProjectRepository;
 import io.github.isharipov.acme.platform.project.external.rest.dto.ExternalProjectInboundDto;
 import io.github.isharipov.acme.platform.project.external.rest.dto.ExternalProjectUpdateInboundDto;
-import io.github.isharipov.acme.platform.user.dto.UserProfileOutboundDto;
+import io.github.isharipov.acme.platform.user.rest.dto.UserProfileOutboundDto;
 import io.github.isharipov.acme.platform.user.service.UserProfileService;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Test;

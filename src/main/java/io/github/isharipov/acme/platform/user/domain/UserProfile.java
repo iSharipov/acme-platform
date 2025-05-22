@@ -1,13 +1,13 @@
-package io.github.isharipov.acme.platform.user.model;
+package io.github.isharipov.acme.platform.user.domain;
 
+import io.github.isharipov.acme.platform.common.domain.Auditable;
 import jakarta.persistence.*;
 
-import java.time.Instant;
 import java.util.UUID;
 
 @Entity
 @Table(name = "user_profiles")
-public class UserProfile {
+public class UserProfile extends Auditable {
 
     @Id
     @GeneratedValue
@@ -17,27 +17,11 @@ public class UserProfile {
     @Column(name = "auth_id", nullable = false, unique = true, columnDefinition = "uuid")
     private UUID authId;
 
-    @Column(name = "name", length = 255)
+    @Column(name = "name")
     private String name;
 
     @Column(name = "deleted", nullable = false)
     private boolean deleted;
-
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private Instant createdAt;
-
-    @Column(name = "updated_at")
-    private Instant updatedAt;
-
-    @PrePersist
-    public void onCreate() {
-        this.createdAt = Instant.now();
-    }
-
-    @PreUpdate
-    public void onUpdate() {
-        this.updatedAt = Instant.now();
-    }
 
     public UUID getId() {
         return id;
@@ -69,22 +53,6 @@ public class UserProfile {
 
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
-    }
-
-    public Instant getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(Instant createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public Instant getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(Instant updatedAt) {
-        this.updatedAt = updatedAt;
     }
 
     @Override

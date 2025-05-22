@@ -1,6 +1,6 @@
 package io.github.isharipov.acme.platform.auth.repository;
 
-import io.github.isharipov.acme.platform.auth.model.UserAuth;
+import io.github.isharipov.acme.platform.auth.domain.UserAuth;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

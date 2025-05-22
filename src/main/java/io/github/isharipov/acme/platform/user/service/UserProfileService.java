@@ -3,7 +3,7 @@ package io.github.isharipov.acme.platform.user.service;
 import io.github.isharipov.acme.platform.common.dto.Principal;
 import io.github.isharipov.acme.platform.user.rest.dto.CreateUserProfileInboundDto;
 import io.github.isharipov.acme.platform.user.rest.dto.UserProfileInboundDto;
-import io.github.isharipov.acme.platform.user.dto.UserProfileOutboundDto;
+import io.github.isharipov.acme.platform.user.rest.dto.UserProfileOutboundDto;
 
 import java.util.UUID;
 

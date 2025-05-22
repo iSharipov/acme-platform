@@ -1,7 +1,7 @@
 package io.github.isharipov.acme.platform.project.external.rest.api;
 
 import io.github.isharipov.acme.platform.project.external.rest.dto.ExternalProjectInboundDto;
-import io.github.isharipov.acme.platform.project.external.dto.ExternalProjectOutboundDto;
+import io.github.isharipov.acme.platform.project.external.rest.dto.ExternalProjectOutboundDto;
 import io.github.isharipov.acme.platform.project.external.rest.dto.ExternalProjectUpdateInboundDto;
 import io.github.isharipov.acme.platform.project.external.service.UserExternalProjectService;
 import jakarta.validation.Valid;

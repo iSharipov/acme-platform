@@ -64,13 +64,6 @@ class UserExternalProjectControllerTestIT {
                 .andExpect(jsonPath("$.externalId").value(inboundDto.externalId()));
     }
 
-    private void register(String email) throws Exception {
-        mockMvc.perform(post("/auth/register")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(new RegisterInboundDto(email, PASSWORD))))
-                .andExpect(status().isCreated());
-    }
-
     @Test
     void shouldUpdateExternalProject_whenAuthenticated() throws Exception {
         // GIVEN
@@ -135,6 +128,91 @@ class UserExternalProjectControllerTestIT {
                 .andExpect(status().isUnprocessableEntity())
                 .andExpect(jsonPath("$.message").value("Http Message Not Readable"))
                 .andExpect(jsonPath("$.description").exists());
+    }
+
+    @Test
+    void shouldReturnUnprocessableEntity_whenExternalIdIsArrayInsteadOfString() throws Exception {
+        // GIVEN
+        var faker = new Faker();
+        var email = faker.internet().emailAddress();
+        var password = "StrongPassword123!";
+
+        var registerResult = mockMvc.perform(post("/auth/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(new RegisterInboundDto(email, password))))
+                .andExpect(status().isCreated())
+                .andReturn();
+
+        var accessToken = objectMapper.readTree(registerResult.getResponse().getContentAsString())
+                .at("/token/accessToken").asText();
+
+        var userProfileResult = mockMvc.perform(get("/api/users/me")
+                        .header("Authorization", "Bearer " + accessToken))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        var userId = objectMapper.readTree(userProfileResult.getResponse().getContentAsString())
+                .get("id").asText();
+
+        var invalidPayload = """
+                {
+                  "externalId": [],
+                  "name": "JIRA-123",
+                  "userId": "%s"
+                }
+                """.formatted(userId);
+
+        // WHEN
+        // THEN
+        mockMvc.perform(post("/api/projects/external")
+                        .header("Authorization", "Bearer " + accessToken)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(invalidPayload))
+                .andExpect(status().isUnprocessableEntity())
+                .andExpect(jsonPath("$.success").value(false))
+                .andExpect(jsonPath("$.message").value("Http Message Not Readable"))
+                .andExpect(jsonPath("$.description").value("Unable to map request JSON: externalId"));
+    }
+
+    @Test
+    void shouldReturnConflict_whenExternalProjectAlreadyExists() throws Exception {
+        // GIVEN
+        var faker = new Faker();
+        var email = faker.internet().emailAddress();
+        register(email);
+        var accessToken = loginAndGetToken(email);
+        var userId = getUserId(accessToken);
+
+        var externalId = faker.internet().uuid();
+        var inboundDto = new ExternalProjectInboundDto(
+                externalId,
+                "JIRA-DUPLICATE",
+                userId
+        );
+
+        // Create first project
+        mockMvc.perform(post("/api/projects/external")
+                        .header("Authorization", "Bearer " + accessToken)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(inboundDto)))
+                .andExpect(status().isCreated());
+
+        // WHEN & THEN: Create second project with same externalId -> should return 409
+        mockMvc.perform(post("/api/projects/external")
+                        .header("Authorization", "Bearer " + accessToken)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(inboundDto)))
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.success").value(false))
+                .andExpect(jsonPath("$.message").value("External project is already exists"));
+    }
+
+
+    private void register(String email) throws Exception {
+        mockMvc.perform(post("/auth/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(new RegisterInboundDto(email, PASSWORD))))
+                .andExpect(status().isCreated());
     }
 
     private String loginAndGetToken(String email) throws Exception {
