@@ -22,4 +22,8 @@ Download and install dashboards #19004, #4701. Use Prometheus Datasource
 ## Logs
 
 #### Loki Datasource - http://loki:3100
-Grafana -> Explore, use **container** as label and acme-platform as a value
+Grafana -> Explore, use **container** as a label and acme-platform as a value
+
+## Acceptance Flow Test
+
+**io.github.isharipov.acme.platform.integration.AcceptanceFlowTestIT**
