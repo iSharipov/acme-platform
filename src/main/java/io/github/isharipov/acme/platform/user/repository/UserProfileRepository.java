@@ -11,8 +11,6 @@ import java.util.UUID;
 @Repository
 public interface UserProfileRepository extends JpaRepository<UserProfile, Long> {
 
-    boolean existsByAuthIdAndDeletedFalse(UUID authId);
-
     Optional<UserProfileProjection> findByAuthIdAndDeletedFalse(UUID authId);
 
     Optional<UserProfile> findEntityByAuthIdAndDeletedFalse(UUID authId);

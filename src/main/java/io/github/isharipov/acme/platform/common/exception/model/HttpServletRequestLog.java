@@ -53,7 +53,7 @@ public class HttpServletRequestLog {
                 request.getMethod(),
                 UrlUtils.buildRequestUrl(request),
                 user,
-                headers.toString(),
+                headers,
                 request.getContentLengthLong(),
                 body != null ? body : "null or unknown"
         );
